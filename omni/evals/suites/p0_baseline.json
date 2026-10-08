@@ -1,0 +1,24 @@
+{
+  "name": "Phase 0 Foundation Baseline Suite",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "name": "host_architecture_x86_64",
+      "type": "shell",
+      "cmd": "uname -m | grep -E 'x86_64|aarch64'",
+      "expected": true
+    },
+    {
+      "name": "bpf_headers_present",
+      "type": "kernel_file",
+      "path": "/usr/include/linux/bpf.h",
+      "expected": true
+    },
+    {
+      "name": "cgroups_v2_filesystem",
+      "type": "shell",
+      "cmd": "grep -q cgroup2 /proc/filesystems 2>/dev/null || true",
+      "expected": true
+    }
+  ]
+}

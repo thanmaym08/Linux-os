@@ -1,0 +1,41 @@
+name: JARVIS OS Continuous Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  p0-foundation-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Install Compilers, Kernel Headers & Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            linux-headers-$(uname -r) \
+            clang \
+            llvm \
+            libbpf-dev \
+            libelf-dev \
+            bpftool \
+            pkg-config \
+            python3
+
+      - name: Build Phase 0 Kernel Module and eBPF Probes
+        run: |
+          make p0-build
+
+      - name: Run Baseline Evaluation Suite
+        run: |
+          python3 evals/runner.py evals/suites/p0_baseline.json
+
+      - name: Validate omni-gate Ledger Tool
+        run: |
+          chmod +x tools/omni-gate
+          python3 tools/omni-gate status
